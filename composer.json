@@ -1,0 +1,25 @@
+{
+  "name": "coolrunner/utils",
+  "description": "Coolrunner utils",
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Coolrunner",
+      "email": "it@coolrunner.dk"
+    }
+  ],
+  "require": {},
+  "autoload": {
+    "psr-4": {
+      "CoolRunner\\Utils\\": "src/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "CoolRunner\\Utils\\UtilsServiceProvider"
+      ]
+    }
+  }
+}

@@ -1,0 +1,5 @@
+# coolrunner-utils
+coolrunner/utils
+
+
+php artisan vendor:publish --provider="Coolrunner\Utils\UtilsServiceProvider" --tag="config"
