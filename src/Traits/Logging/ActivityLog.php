@@ -4,18 +4,17 @@
 namespace CoolRunner\Utils\Traits\Logging;
 
 
-use Illuminate\Support\Facades\Route;
-use Spatie\Activitylog\LogOptions;
-use Spatie\Activitylog\Traits\LogsActivity;
+use CoolRunner\Utils\Http\Middleware\AuditModelsChanges;
+use OwenIt\Auditing\Auditable;
 
 trait ActivityLog
 {
-    use LogsActivity;
+    use Auditable;
 
-    public function getActivitylogOptions(): LogOptions
-    {
-        return LogOptions::defaults()
-            ->logAll()
-            ->logOnlyDirty();
+    public static function bootActivityLog() {
+        self::$auditingDisabled = true;
+
+        if(AuditModelsChanges::$auditing_enabled)
+            self::$auditingDisabled = false;
     }
 }
