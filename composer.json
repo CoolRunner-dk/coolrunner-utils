@@ -22,8 +22,7 @@
     }
   },
   "require" : {
-    "php": "^8.0",
-    "spatie/laravel-activitylog": "^4.2"
+    "php": "^8.0"
   },
   "require-dev": {
     "laravel/laravel": "^8.0"
