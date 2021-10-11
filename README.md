@@ -2,3 +2,5 @@
 coolrunner/utils
 
 # Install
+
+``$ php artisan vendor ``
