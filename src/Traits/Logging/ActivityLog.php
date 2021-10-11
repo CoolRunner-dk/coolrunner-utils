@@ -5,6 +5,7 @@ namespace CoolRunner\Utils\Traits\Logging;
 
 
 use CoolRunner\Utils\Http\Middleware\AuditModelsChanges;
+use Illuminate\Support\Facades\Config;
 use OwenIt\Auditing\Auditable;
 
 trait ActivityLog
@@ -12,9 +13,17 @@ trait ActivityLog
     use Auditable;
 
     public static function bootActivityLog() {
-        self::$auditingDisabled = true;
+//        static::$auditingDisabled = true;
+//
+//        if(AuditModelsChanges::$auditing_enabled)
+//            static::$auditingDisabled = false;
+    }
 
-        if(AuditModelsChanges::$auditing_enabled)
-            self::$auditingDisabled = false;
+    protected function initializeActivityLog() {
+
+        $this->auditDriver  = [
+            'table'      => 'audits',
+            'connection' => 'logging',
+        ];
     }
 }
