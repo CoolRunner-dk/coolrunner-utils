@@ -9,7 +9,6 @@
       "email": "it@coolrunner.dk"
     }
   ],
-  "require": {},
   "autoload": {
     "psr-4": {
       "CoolRunner\\Utils\\": "src/"
@@ -21,5 +20,8 @@
         "CoolRunner\\Utils\\UtilsServiceProvider"
       ]
     }
+  },
+  "require-dev": {
+    "laravel/laravel": "^8.0"
   }
 }
