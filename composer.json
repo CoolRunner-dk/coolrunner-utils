@@ -17,9 +17,13 @@
   "extra": {
     "laravel": {
       "providers": [
-        "CoolRunner\\Utils\\UtilsServiceProvider"
+        "CoolRunner\\Utils\\Providers\\UtilsServiceProvider"
       ]
     }
+  },
+  "require" : {
+    "php": "^8.0",
+    "spatie/laravel-activitylog": "^4.2"
   },
   "require-dev": {
     "laravel/laravel": "^8.0"
