@@ -9,7 +9,8 @@ return [
         'input_log' => [
             'table' => null,
             'connection' => env('LOGGING_DB_DATABASE', 'logging')
-        ]
+        ],
+        
     ],
     'connections' => [
         'logging' => [

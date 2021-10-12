@@ -18,12 +18,4 @@ trait ActivityLog
         if(AuditModelsChanges::isEnabled())
             static::$auditingDisabled = false;
     }
-
-    protected function initializeActivityLog() {
-
-        $this->auditDriver  = [
-            'table'      => 'audits',
-            'connection' => 'logging',
-        ];
-    }
 }

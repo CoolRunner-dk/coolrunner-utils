@@ -5,6 +5,7 @@ use Composer\InstalledVersions;
 use CoolRunner\Utils\Http\Middleware\AuditModelsChanges;
 use CoolRunner\Utils\Http\Middleware\InputLogger;
 use CoolRunner\Utils\Models\InLog;
+use Illuminate\Foundation\Exceptions\Handler;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Routing\Router;
 use OwenIt\Auditing\AuditingServiceProvider;
@@ -15,6 +16,7 @@ class UtilsServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(__DIR__ . '/../config/config.php', 'utils');
         $this->mergeConfigFrom(__DIR__ . '/../config/audit.php', 'audit');
+        $this->registerProviders();
     }
 
     public function boot()
@@ -28,7 +30,10 @@ class UtilsServiceProvider extends ServiceProvider
         $this->registerMiddlewares();
         $this->registerConnection();
 
-        $this->app->register(GuzzleClientProvider::class);
+
+
+
+
 
     }
 
@@ -45,5 +50,9 @@ class UtilsServiceProvider extends ServiceProvider
         foreach (config('utils.connections', []) as $connection => $setup) {
             config(["database.connections.$connection" => $setup]);
         }
+    }
+
+    protected function registerProviders() {
+        $this->app->register(GuzzleClientProvider::class);
     }
 }
