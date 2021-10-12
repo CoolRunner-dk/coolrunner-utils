@@ -8,7 +8,7 @@ use Closure;
 class AuditModelsChanges
 {
 
-    public static $auditing_enabled = false;
+    protected static bool $auditing_enabled = false;
 
     /**
      * Handle an incoming request.
@@ -21,5 +21,10 @@ class AuditModelsChanges
     {
         static::$auditing_enabled = true;
         return $next($request);
+    }
+
+    public static function isEnabled() : bool
+    {
+        return static::$auditing_enabled;
     }
 }

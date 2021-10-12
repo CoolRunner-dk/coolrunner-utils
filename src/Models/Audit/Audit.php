@@ -1,21 +1,13 @@
 <?php
 namespace CoolRunner\Utils\Models\Audit;
 
-
-use CoolRunner\Utils\Jobs\SaveAudit;
+use CoolRunner\Utils\Traits\Models\HasSessionUuid;
+use CoolRunner\Utils\Traits\Models\SavesEnvironment;
+use CoolRunner\Utils\Traits\Models\SavesModelAsync;
 
 class Audit extends \OwenIt\Auditing\Models\Audit
 {
-    public function save(array $options = [])
-    {
-        if(isset($options['force'])) {
-            return parent::save();
-        }
-
-        $this->service = env('APP_NAME');
-
-        SaveAudit::dispatch($this);
-
-        return true;
-    }
+   use SavesModelAsync;
+   use SavesEnvironment;
+   use HasSessionUuid;
 }

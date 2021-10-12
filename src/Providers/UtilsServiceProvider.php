@@ -2,6 +2,7 @@
 namespace CoolRunner\Utils\Providers;
 
 use Composer\InstalledVersions;
+use CoolRunner\Utils\Http\Middleware\AuditModelsChanges;
 use CoolRunner\Utils\Http\Middleware\InputLogger;
 use CoolRunner\Utils\Models\InLog;
 use Illuminate\Support\ServiceProvider;
@@ -24,21 +25,25 @@ class UtilsServiceProvider extends ServiceProvider
             ], 'config');
         }
 
-        // Register router middlewares
-        $router = $this->app->make(Router::class);
+        $this->registerMiddlewares();
         $this->registerConnection();
+
+        $this->app->register(GuzzleClientProvider::class);
+
+    }
+
+    protected function registerMiddlewares() {
+        /** @var Router $router */
+        $router = $this->app->make(Router::class);
+
+        $router->aliasMiddleware('audit', AuditModelsChanges::class);
+        $router->aliasMiddleware('input_log', InputLogger::class);
 
     }
 
     protected function registerConnection() {
-        config(['database.connections.logging' => [
-            'driver' => 'mysql',
-            'url' => env('DATABASE_URL'),
-            'host' => env('DB_HOST', '127.0.0.1'),
-            'port' => env('DB_PORT', '3306'),
-            'database' => 'logging',
-            'username' => env('DB_USERNAME', ''),
-            'password' => env('DB_PASSWORD', ''),
-        ]]);
+        foreach (config('utils.connections', []) as $connection => $setup) {
+            config(["database.connections.$connection" => $setup]);
+        }
     }
 }

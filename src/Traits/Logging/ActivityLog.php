@@ -13,10 +13,10 @@ trait ActivityLog
     use Auditable;
 
     public static function bootActivityLog() {
-//        static::$auditingDisabled = true;
-//
-//        if(AuditModelsChanges::$auditing_enabled)
-//            static::$auditingDisabled = false;
+        static::$auditingDisabled = true;
+
+        if(AuditModelsChanges::isEnabled())
+            static::$auditingDisabled = false;
     }
 
     protected function initializeActivityLog() {
