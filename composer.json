@@ -19,7 +19,7 @@
       "providers": [
         "CoolRunner\\Utils\\Providers\\UtilsServiceProvider",
         "CoolRunner\\Utils\\Providers\\GuzzleClientProvider"
-      ],
+      ]
     },
     "require": {
       "php": "^8.0",
