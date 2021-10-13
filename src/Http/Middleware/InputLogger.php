@@ -3,9 +3,6 @@
 
 namespace CoolRunner\Utils\Http\Middleware;
 
-
-
-
 use App\Interfaces\Http\Loggable;
 use CoolRunner\Utils\Models\Logging\InputLog;
 use Illuminate\Database\Eloquent\Model;

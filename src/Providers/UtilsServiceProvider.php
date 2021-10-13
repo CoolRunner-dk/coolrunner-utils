@@ -1,14 +1,10 @@
 <?php
+
 namespace CoolRunner\Utils\Providers;
 
-use Composer\InstalledVersions;
-use CoolRunner\Utils\Http\Middleware\AuditModelsChanges;
-use CoolRunner\Utils\Http\Middleware\InputLogger;
-use CoolRunner\Utils\Models\InLog;
-use Illuminate\Foundation\Exceptions\Handler;
+use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Routing\Router;
-use OwenIt\Auditing\AuditingServiceProvider;
 
 class UtilsServiceProvider extends ServiceProvider
 {
@@ -17,6 +13,7 @@ class UtilsServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(__DIR__ . '/../config/config.php', 'utils');
         $this->mergeConfigFrom(__DIR__ . '/../config/audit.php', 'audit');
         $this->registerProviders();
+        $this->registerAliases();
     }
 
     public function boot()
@@ -29,30 +26,47 @@ class UtilsServiceProvider extends ServiceProvider
 
         $this->registerMiddlewares();
         $this->registerConnection();
-
-
-
-
-
-
+        $this->registerMixins();
     }
 
-    protected function registerMiddlewares() {
+    protected function registerProviders()
+    {
+        $this->app->register(GuzzleClientProvider::class);
+    }
+
+    protected function registerAliases()
+    {
+        foreach (config('utils.aliases') as $alias => $binding) {
+            AliasLoader::getInstance()->alias($alias, $binding);
+        }
+    }
+
+    protected function registerMiddlewares()
+    {
         /** @var Router $router */
         $router = $this->app->make(Router::class);
-
-        $router->aliasMiddleware('audit', AuditModelsChanges::class);
-        $router->aliasMiddleware('input_log', InputLogger::class);
-
+        foreach (config('utils.middleware') as $name => $class) {
+            $router->aliasMiddleware($name, $class);
+        }
     }
 
-    protected function registerConnection() {
+    protected function registerConnection()
+    {
         foreach (config('utils.connections', []) as $connection => $setup) {
             config(["database.connections.$connection" => $setup]);
         }
     }
 
-    protected function registerProviders() {
-        $this->app->register(GuzzleClientProvider::class);
+    protected function registerMixins()
+    {
+        /**
+         * @var \Illuminate\Support\Traits\Macroable $macroable
+         * @var \stdClass $mixins
+         */
+        foreach (config('utils.mixins') as $macroable => $mixins) {
+            foreach ($mixins as $mixin) {
+                $macroable::mixin(new $mixin);
+            }
+        }
     }
 }

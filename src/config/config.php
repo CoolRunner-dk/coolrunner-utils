@@ -10,7 +10,7 @@ return [
             'table' => null,
             'connection' => env('LOGGING_DB_DATABASE', 'logging')
         ],
-        
+
     ],
     'connections' => [
         'logging' => [
@@ -35,5 +35,38 @@ return [
         'clients' => [
             'default' => [],
         ],
+    ],
+    'mixins' => [
+        \Illuminate\Support\Arr::class => [
+            \CoolRunner\Utils\Mixins\Arr::class
+        ],
+
+        \Illuminate\Support\Carbon::class => [
+            \CoolRunner\Utils\Mixins\Dates::class
+        ],
+
+        \Illuminate\Support\Str::class => [
+            \CoolRunner\Utils\Mixins\Str::class
+        ],
+
+        \Illuminate\Support\Facades\Auth::class => [
+            \CoolRunner\Utils\Mixins\Auth::class
+        ],
+
+        \Illuminate\Database\Query\Builder::class => [
+            \CoolRunner\Utils\Mixins\Builder::class
+        ],
+
+        \Illuminate\Database\Eloquent\Builder::class => [
+            \CoolRunner\Utils\Mixins\Eloquent::class
+        ]
+    ],
+    'aliases' => [
+        "Num" => \CoolRunner\Utils\Support\Tools\Number::class,
+        "Bytes" => \CoolRunner\Utils\Support\Tools\Bytes::class
+    ],
+    'middleware' => [
+        'audit' =>  CoolRunner\Utils\Http\Middleware\AuditModelsChanges::class,
+        'input_log' => CoolRunner\Utils\Http\Middleware\InputLogger::class
     ]
 ];
