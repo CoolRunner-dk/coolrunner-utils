@@ -6,6 +6,7 @@
 
 namespace CoolRunner\Utils\Models\Logging;
 
+use CoolRunner\Utils\Models\Audit\Audit;
 use CoolRunner\Utils\Traits\Logging\DeconstructsRequests;
 use CoolRunner\Support\Tools\Bytes;
 use CoolRunner\Utils\Traits\Models\BelongsToAuthModel;
@@ -15,6 +16,7 @@ use CoolRunner\Utils\Traits\Models\SavesModelAsync;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Facades\Config;
 use Psr\Http\Message\MessageInterface;
@@ -175,6 +177,14 @@ class ClientLog extends Model
 
     public function user() : MorphTo {
         return $this->morphTo('user');
+    }
+
+    public function audits() : HasMany|Audit {
+        return $this->hasMany(Audit::class,'session_uuid','session_uuid');
+    }
+
+    public function inputLogs() : HasMany|InputLog {
+        return $this->hasMany(InputLog::class,'session_uuid','session_uuid');
     }
 
 

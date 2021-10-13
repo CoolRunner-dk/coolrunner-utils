@@ -3,6 +3,7 @@
 
 namespace CoolRunner\Utils\Models\Logging;
 
+use CoolRunner\Utils\Models\Audit\Audit;
 use CoolRunner\Utils\Support\Tools\Bytes;
 use CoolRunner\Utils\Traits\Logging\DeconstructsRequests;
 use CoolRunner\Utils\Traits\Models\BelongsToAuthModel;
@@ -11,6 +12,7 @@ use CoolRunner\Utils\Traits\Models\SavesEnvironment;
 use CoolRunner\Utils\Traits\Models\SavesModelAsync;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Config;
 use Psr\Http\Message\MessageInterface;
@@ -91,11 +93,6 @@ class InputLog extends Model
         'application/json',
         'text/xml',
     ];
-
-//    public function clientLogs()
-//    {
-//        return $this->hasMany(ClientLog::class, 'input_log_uuid', 'uuid');
-//    }
 
     public function fillFromRequest(Request $request) : static
     {
@@ -178,5 +175,13 @@ class InputLog extends Model
 
     public function user() {
         return $this->morphTo('user');
+    }
+
+    public function audits() : HasMany|Audit {
+        return $this->hasMany(Audit::class,'session_uuid','session_uuid');
+    }
+
+    public function clientLogs() : HasMany|ClientLog {
+        return $this->hasMany(ClientLog::class,'session_uuid','session_uuid');
     }
 }
