@@ -72,7 +72,6 @@ class Str
                 $delimiters[$delimiter] = count(explode($delimiter, $csv_string));
             }
 
-            \Str::
             asort($delimiters);
 
             return \Arr::last(array_keys($delimiters));

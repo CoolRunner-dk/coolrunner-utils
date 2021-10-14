@@ -45,17 +45,26 @@ LOGGING_DB_PASSWORD={password}
 ## Mixins
 
 ### Str
+Available [\Str](https://laravel.com/docs/8.x/helpers#strings-method-list) Macros, implemented from this package
+
+[`utf8Encode`](#utf8Encode)
+[`replaceLastOccurrence`](#replaceLastOccurrence)
+[`randomNumber`](#randomNumber)
+[`detectCsvDelimiter`](#detectCsvDelimiter)
+[`isBase64`](#isBase64)
+[`randomString`](#randomString)
+[`normalize`](#normalize)
 
 ---
 ### Arr
-Available Array Macros, implemented from this package 
+Available [\Arr](https://laravel.com/docs/8.x/helpers#arrays-and-objects-method-list) Macros, implemented from this package 
 
 [`makeArray`](#makeArray)
 [`fromCsv`](#fromCsv)
 [`fromXml`](#fromXml)
 [`nestByPrefix`](#nestByPrefix)
 [`prefix`](#prefix)
-[`flatten`](#flatten)
+[`flattenWithKeys`](#flattenWithKeys)
 [`isMultidimensional`](#isMultidimensional)
 [`isAssociative`](#isAssociative)
 [`renameKeys`](#renameKeys)
@@ -64,65 +73,19 @@ Available Array Macros, implemented from this package
 [`mask`](#mask)
 [`toCss`](#toCss)
 
-<a name="makeArray"></a> *# makeArray()*
-```php
-Arr::makeArray();
-```
-<a name="fromCsv"></a> *# fromCsv()*
-```php
-Arr::fromCsv();
-```
-<a name="fromXml"></a> *# fromXml()*
-```php
-Arr::fromXml();
-```
-<a name="nestByPrefix"></a> *# nestByPrefix()*
-```php
-Arr::nestByPrefix();
-```
-<a name="prefix"></a> *# prefix()*
-```php
-Arr::prefix();
-```
-<a name="flatten"></a> *# flatten()*
-```php
-Arr::flatten();
-```
-<a name="isMultidimensional"></a> *# isMultidimensional()*
-```php
-Arr::isMultidimensional();
-```
-<a name="isAssociative"></a> *# isAssociative()*
-```php
-Arr::isAssociative();
-```
-<a name="renameKeys"></a> *# renameKeys()*
-```php
-Arr::renameKeys();
-```
-<a name="mapKeys"></a> *# mapKeys()*
-```php
-Arr::mapKeys();
-```
-<a name="mapKeysRecursive"></a> *# mapKeysRecursive()*
-```php
-Arr::mapKeysRecursive();
-```
-<a name="mask"></a> *# mask()*
-```php
-Arr::mask();
-```
-<a name="toCss"></a> *# toCss()*
-```php
-Arr::toCss();
-```
 ---
 
 ### Builder
+Available [Builder](https://laravel.com/docs/8.x/queries) Macros, implemented from this package
 
+[`getRawQuery`](#getRawQuery)
+[`getRawQueryParts`](#getRawQueryParts)
 
 ---
 ### Carbon
+Available [Carbon](https://carbon.nesbot.com/docs/) Macros, implemented from this package
+
+[`lastBusinessDay`](#lastBusinessDay)
 
 ---
 
