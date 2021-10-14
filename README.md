@@ -26,3 +26,9 @@ LOGGING_DB_PORT=3306
 LOGGING_DB_USERNAME={username}
 LOGGING_DB_PASSWORD={password}
 ```
+
+It's also possible to publish the package config.
+
+```properties
+php artisan vendor:publish --provider "CoolRunner\Utils\Providers\UtilsServiceProvider" --tag="config"
+```
