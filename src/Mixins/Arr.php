@@ -129,13 +129,14 @@ class Arr
         };
     }
 
-    public function flatten()
+    public function flattenWithKeys()
     {
+
         return function ($array, $keep_assoc_key = true) {
             $collection = [];
             foreach ($array as $assoc_key => $value) {
                 if (is_array($value) && \Arr::isAssoc($value)) {
-                    foreach (\Arr::flatten($value) as $subKey => $subValue) {
+                    foreach ((new Arr())->flattenWithKeys()($value) as $subKey => $subValue) {
                         $keys = [$assoc_key, $subKey];
                         if (!$keep_assoc_key) {
                             array_shift($keys);
@@ -203,7 +204,7 @@ class Arr
             $array = \Arr::mapKeys($array, $callback);
             foreach ($array as $key => $item) {
                 if (is_array($item)) {
-                    $array[$key] = (new static)->mapKeysRecursive()($item, $callback);
+                    $array[$key] = \Arr::mapKeysRecursive()($item, $callback);
                 }
             }
             return $array;
@@ -255,7 +256,7 @@ class Arr
                 if (is_string($i) && in_array($i, $keys)) {
                     $data[$i] = $mask;
                 } elseif (is_array($entry) && $recursive) {
-                    $entry = \Arr::mask($keys, $entry, $mask, $recursive);
+                    $entry = (new Arr())->mask()($keys, $entry, $mask, $recursive);
                 }
             }
 
@@ -288,7 +289,7 @@ class Arr
                     $properties = $value;
 
                     $css .= $prefix . "$selector {\n";
-                    $css .= $prefix . \Arr::toCss($properties, $indent + 1);
+                    $css .= $prefix . (new Arr())->toCss()($properties, $indent + 1);
                     $css .= $prefix . "}\n";
                 } else {
                     $property = $key;
