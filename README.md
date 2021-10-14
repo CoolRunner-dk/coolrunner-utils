@@ -21,7 +21,7 @@ composer require coolrunner/utils
 Add the following env properties the dotenv file, and fill the variables in curly brackets.
 ```dotenv
 LOGGING_DB_CONNECTION=mysql
-LOGGING_DB_HOST=mariadb
+LOGGING_DB_HOST={host}
 LOGGING_DB_PORT=3306
 LOGGING_DB_USERNAME={username}
 LOGGING_DB_PASSWORD={password}
