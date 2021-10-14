@@ -12,6 +12,13 @@ return [
         ],
 
     ],
+    "jobs" => [
+      "save_model" => [
+          "queue" => env('UTILS_JOBS_QUEUE'),
+          "connection" => env('UTILS_JOBS_CONNECTION')
+
+      ]
+    ],
     'connections' => [
         'logging' => [
             'driver' => 'mysql',

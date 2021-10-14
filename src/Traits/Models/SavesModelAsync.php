@@ -5,6 +5,7 @@ use CoolRunner\Utils\Jobs\SaveModel;
 
 /**
  * Trait SaveModelAsync
+ * @mixin \Illuminate\Database\Eloquent\Model
  */
 trait SavesModelAsync
 {
@@ -13,11 +14,14 @@ trait SavesModelAsync
         if(isset($options['force'])) {
             return parent::save();
         }
-        
+
         $job = new SaveModel($this);
 
-//        $job->onQueue(config(''));
-//        $job->onConnection('');
+        if($queue = config('utils.jobs.save_model.queue'))
+            $job->onQueue($queue);
+
+        if($connection = config('utils.jobs.save_model.connection'))
+            $job->onConnection($connection);
 
         dispatch($job);
 
