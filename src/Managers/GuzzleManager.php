@@ -4,6 +4,7 @@ namespace CoolRunner\Utils\Managers;
 
 use GuzzleHttp\Client;
 use Illuminate\Support\Manager;
+use Psr\Http\Message\UriInterface;
 
 class GuzzleManager extends Manager
 {
@@ -15,12 +16,12 @@ class GuzzleManager extends Manager
     protected $registeredConfigs = [];
 
     /**
-     * @param string|UriInterface|null $baseUri
+     * @param string $baseUri
      * @param array $config
      *
-     * @return GuzzleClient
+     * @return Client
      */
-    public function make($baseUri = null, array $config = []): Client
+    public function make(string $baseUri = null, array $config = []) : Client
     {
         if ($baseUri !== null) {
             $config['base_uri'] = $baseUri;
@@ -32,11 +33,6 @@ class GuzzleManager extends Manager
     public function client(?string $identifier = null): Client
     {
         return $this->driver($identifier);
-    }
-
-    public function driver($driver = null): Client
-    {
-        return parent::driver($driver);
     }
 
     public function getDefaultDriver(): string

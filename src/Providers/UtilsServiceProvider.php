@@ -5,6 +5,8 @@ namespace CoolRunner\Utils\Providers;
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Routing\Router;
+use Illuminate\Support\Traits\Macroable;
+use stdClass;
 
 class UtilsServiceProvider extends ServiceProvider
 {
@@ -60,8 +62,8 @@ class UtilsServiceProvider extends ServiceProvider
     protected function registerMixins()
     {
         /**
-         * @var \Illuminate\Support\Traits\Macroable $macroable
-         * @var \stdClass $mixins
+         * @var Macroable $macroable
+         * @var stdClass $mixins
          */
         foreach (config('utils.mixins') as $macroable => $mixins) {
             foreach ($mixins as $mixin) {

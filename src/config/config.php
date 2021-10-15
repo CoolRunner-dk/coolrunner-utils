@@ -10,13 +10,11 @@ return [
             'table' => null,
             'connection' => env('LOGGING_DB_DATABASE', 'logging')
         ],
-
     ],
     "jobs" => [
       "save_model" => [
           "queue" => env('UTILS_JOBS_QUEUE'),
           "connection" => env('UTILS_JOBS_CONNECTION')
-
       ]
     ],
     'connections' => [
@@ -45,35 +43,37 @@ return [
     ],
     'mixins' => [
         \Illuminate\Support\Arr::class => [
-            \CoolRunner\Utils\Mixins\Arr::class
+            \CoolRunner\Utils\Mixins\Arr::class,
         ],
 
         \Illuminate\Support\Carbon::class => [
-            \CoolRunner\Utils\Mixins\Dates::class
+            \CoolRunner\Utils\Mixins\Dates::class,
         ],
 
         \Illuminate\Support\Str::class => [
-            \CoolRunner\Utils\Mixins\Str::class
+            \CoolRunner\Utils\Mixins\Str::class,
         ],
 
         \Illuminate\Support\Facades\Auth::class => [
-            \CoolRunner\Utils\Mixins\Auth::class
+            \CoolRunner\Utils\Mixins\Auth::class,
         ],
 
         \Illuminate\Database\Query\Builder::class => [
-            \CoolRunner\Utils\Mixins\Builder::class
+            \CoolRunner\Utils\Mixins\Builder::class,
         ],
 
         \Illuminate\Database\Eloquent\Builder::class => [
-            \CoolRunner\Utils\Mixins\Eloquent::class
-        ]
+            \CoolRunner\Utils\Mixins\Eloquent::class,
+        ],
     ],
     'aliases' => [
-        "Num" => \CoolRunner\Utils\Support\Tools\Number::class,
-        "Bytes" => \CoolRunner\Utils\Support\Tools\Bytes::class
+        "Num"       => \CoolRunner\Utils\Support\Tools\Number::class,
+        "Bytes"     => \CoolRunner\Utils\Support\Tools\Bytes::class,
+        "Converter" => \CoolRunner\Utils\Support\Tools\Converter::class,
+        "Coords"    => \CoolRunner\Utils\Support\Tools\Coords::class,
     ],
     'middleware' => [
-        'audit' =>  CoolRunner\Utils\Http\Middleware\AuditModelsChanges::class,
-        'input_log' => CoolRunner\Utils\Http\Middleware\InputLogger::class
-    ]
+        'audit'     => CoolRunner\Utils\Http\Middleware\AuditModelsChanges::class,
+        'input_log' => CoolRunner\Utils\Http\Middleware\InputLogger::class,
+    ],
 ];

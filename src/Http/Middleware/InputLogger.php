@@ -3,10 +3,9 @@
 
 namespace CoolRunner\Utils\Http\Middleware;
 
-use App\Interfaces\Http\Loggable;
+use CoolRunner\Utils\Interfaces\Logging\Loggable;
 use CoolRunner\Utils\Models\Logging\InputLog;
 use Illuminate\Database\Eloquent\Model;
-use Str;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -14,9 +13,9 @@ class InputLogger
 {
     protected static ?InputLog $log = null;
 
-    protected $blocked_prefixes = [
+    protected array $blocked_prefixes = [
         '__clockwork',
-        ''
+        '',
     ];
 
     public function handle(Request $request, $next)
@@ -38,7 +37,7 @@ class InputLogger
         $route = ltrim($request->getPathInfo(), '/');
 
         foreach ($this->blocked_prefixes as $prefix) {
-            if (Str::startsWith($route, $prefix) || $route == $prefix) {
+            if (\Illuminate\Support\Str::startsWith($route, $prefix) || $route == $prefix) {
                 return $request;
             }
         }
@@ -59,14 +58,14 @@ class InputLogger
 
         if ($log) {
             try {
-                $route = \Route::current();
-                $log = $log->fillFromResponse($response)
-                    ->fillFromRoute($route);
+                $route = app('router')->current();
+                $log   = $log->fillFromResponse($response)
+                             ->fillFromRoute($route);
 
                 $log->save();
 
-                /** @var Loggable|\App\Http\Controllers\Controller $controller */
-                if (class_implements(($controller = $route->controller), Loggable::class)) {
+                $controller = $route->controller;
+                if ($controller instanceof Loggable) {
                     $controller->log($log);
                 }
             }catch (\Throwable $e) {}

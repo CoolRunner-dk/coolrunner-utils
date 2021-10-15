@@ -10,10 +10,8 @@ class Builder
 {
 
     public function getRawQuery() {
-        /**
-         * @var BuildsQueries|\Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder $query
-         */
         return function ($query) : string {
+            /** @var \Illuminate\Database\Eloquent\Builder $query */
             if (env('APP_ENV') === 'production') {
                 throw new \Exception('builder_get_raw_query should not be used in production!');
             }
