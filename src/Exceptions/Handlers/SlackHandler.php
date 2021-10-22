@@ -166,7 +166,7 @@ class SlackHandler extends \Monolog\Handler\SlackWebhookHandler
 
     public function getStoragePrefix()
     {
-        $name = \Str::kebab(env('APP_NAME'));
+        $name = \Str::kebab(env('LOGGING_STORAGE_PREFIX', env('APP_NAME')));
 
         if (env('APP_DEBUG')) {
             $name = 'local';
