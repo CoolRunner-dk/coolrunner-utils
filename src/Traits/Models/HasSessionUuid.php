@@ -2,24 +2,25 @@
 
 namespace CoolRunner\Utils\Traits\Models;
 
-use Coolrunner\Support\Internal;
+use CoolRunner\Utils\Support\Internal\SessionUuid;
 use Illuminate\Database\Eloquent\Model;
 
 /**
  * Trait HasSessionUuid
  *
  * @package CoolRunner\Utils\Traits\Models
+ * @property-read $session_uuid
  * @mixin \Illuminate\Database\Eloquent\Model
  */
 trait HasSessionUuid
 {
     public static function bootHasSessionUuid() {
         static::saving(function (Model $model) {
-            try {
-                $model->setAttribute('session_uuid', \CoolRunner\Utils\Support\Internal\SessionUuid::get());
-            }catch (\Throwable $e) {
-                dd($e);
-            }
+            $model->setAttribute('session_uuid', $model);
         });
+    }
+
+    public function getSessionUuidAttribute() {
+        return $this->session_uuid ?: SessionUuid::get();
     }
 }
