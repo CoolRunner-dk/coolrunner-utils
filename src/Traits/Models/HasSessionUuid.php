@@ -20,7 +20,7 @@ trait HasSessionUuid
         });
     }
 
-    public function getSessionUuidAttribute() {
-        return $this->session_uuid ?: SessionUuid::get();
+    public function getSessionUuidAttribute($session_uuid) {
+        return $session_uuid ?: SessionUuid::get();
     }
 }
