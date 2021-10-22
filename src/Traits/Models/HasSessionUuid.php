@@ -16,7 +16,7 @@ trait HasSessionUuid
 {
     public static function bootHasSessionUuid() {
         static::saving(function (Model $model) {
-            $model->setAttribute('session_uuid', $model);
+            $model->setAttribute('session_uuid', $model->session_uuid);
         });
     }
 
