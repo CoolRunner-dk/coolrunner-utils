@@ -5,8 +5,9 @@ namespace CoolRunner\Utils\Http\Middleware;
 
 use CoolRunner\Utils\Interfaces\Logging\Loggable;
 use CoolRunner\Utils\Models\Logging\InputLog;
+use CoolRunner\Utils\Support\Internal\SessionUuid;
 use Illuminate\Database\Eloquent\Model;
-use Symfony\Component\HttpFoundation\Request;
+use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class InputLogger
@@ -15,8 +16,11 @@ class InputLogger
 
     protected array $blocked_prefixes = [
         '__clockwork',
-        '',
     ];
+
+    public static function getSessionUuid() {
+        return static::getLog()->session_uuid;
+    }
 
     public function handle(Request $request, $next)
     {

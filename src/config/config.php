@@ -4,11 +4,11 @@ return [
     'drivers' => [
         'client_log' => [
             'table' => null,
-            'connection' => env('LOGGING_DB_DATABASE', 'logging')
+            'connection' => env('LOGGING_CONNECTION', 'logging')
         ],
         'input_log' => [
             'table' => null,
-            'connection' => env('LOGGING_DB_DATABASE', 'logging')
+            'connection' => env('LOGGING_DATABASE', 'logging')
         ],
     ],
     "jobs" => [
