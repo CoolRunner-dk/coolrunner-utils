@@ -8,7 +8,10 @@ return [
         ],
         'input_log' => [
             'table' => null,
-            'connection' => env('LOGGING_CONNECTION', 'logging')
+            'connection' => env('LOGGING_CONNECTION', 'logging'),
+            'blocked_prefixes' => [
+                '__clockwork',
+            ]
         ],
     ],
     "jobs" => [

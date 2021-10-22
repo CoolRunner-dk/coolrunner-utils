@@ -47,24 +47,24 @@ class GuzzleClientProvider extends ServiceProvider
         );
 
         $this->app->alias(Client::class, ClientInterface::class);
-        
+
         Guzzle::extend('default', static function (Container $app, ?array $parameters): Client {
             return app('LoggedClient', $parameters);
         });
 
     }
 
-    protected function getHandlerStack(array $parameters) : HandlerStack
+    protected static function getHandlerStack(array $parameters) : HandlerStack
     {
         return \Arr::get($parameters, 'handler', HandlerStack::create());
     }
 
-    protected function getClockworkEvent(ClientLog $log)
+    protected static function getClockworkEvent(ClientLog $log)
     {
         return clock()->event("Outbound Request: [$log->method] $log->type | $log->service")->name(\Str::random(64))->begin();
     }
 
-    protected function onStatsHandler(ClientLog $log, callable $on_stats = null) : \Closure
+    protected static function onStatsHandler(ClientLog $log, callable $on_stats = null) : \Closure
     {
         return function (TransferStats $stats) use ($log, $on_stats) {
             if (is_callable($on_stats)) {
@@ -104,8 +104,8 @@ class GuzzleClientProvider extends ServiceProvider
 
             $options = array_merge([
                 ClientLog::LOG_ENTRY       => $log,
-                ClientLog::CLOCKWORK_ENTRY => $this->getClockworkEvent($log),
-                RequestOptions::ON_STATS   => $this->onStatsHandler(
+                ClientLog::CLOCKWORK_ENTRY => static::getClockworkEvent($log),
+                RequestOptions::ON_STATS   => static::onStatsHandler(
                     $log, $options[RequestOptions::ON_STATS] ?? null
                 ),
             ]);

@@ -8,18 +8,16 @@ use CoolRunner\Utils\Models\Logging\InputLog;
 use CoolRunner\Utils\Support\Internal\SessionUuid;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Config;
 use Symfony\Component\HttpFoundation\Response;
 
 class InputLogger
 {
     protected static ?InputLog $log = null;
 
-    protected array $blocked_prefixes = [
-        '__clockwork',
-    ];
 
     public static function getSessionUuid() {
-        return static::getLog()?->session_uuid;
+        return static::getLog()->session_uuid;
     }
 
     public function handle(Request $request, $next)
@@ -40,7 +38,7 @@ class InputLogger
     {
         $route = ltrim($request->getPathInfo(), '/');
 
-        foreach ($this->blocked_prefixes as $prefix) {
+        foreach (static::getBlockedPrefixes() as $prefix) {
             if (\Illuminate\Support\Str::startsWith($route, $prefix) || $route == $prefix) {
                 return $request;
             }
@@ -72,10 +70,15 @@ class InputLogger
                 if ($controller instanceof Loggable) {
                     $controller->log($log);
                 }
-            }catch (\Throwable $e) {}
+            }catch (\Throwable $e) {
+                report($e);
+            }
         }
 
-
         return $response;
+    }
+
+    public static function getBlockedPrefixes() {
+        return Config::get('utils.drivers.input_log.blocked_prefixes',[]);
     }
 }
