@@ -98,7 +98,12 @@ class SlackHandler extends \Monolog\Handler\SlackWebhookHandler
             $context = array_merge($context, $handler->addContext($context));
         }
 
+        if (env('APP_DEBUG')) {
+            $context['local'] = 'Is from a local env';
+        }
+
         $record['context'] = $context;
+
 
         // If the record contains an exception then store it externally and replace it with a URL for the file
         if (\Arr::has($record, 'context.exception')) {
