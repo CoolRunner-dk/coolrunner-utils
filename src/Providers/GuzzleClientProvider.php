@@ -33,39 +33,7 @@ class GuzzleClientProvider extends ServiceProvider
 
             $parameters['handler'] = $stack;
 
-            $stack->push(Middleware::tap(function (RequestInterface $request, array &$options) use ($parameters) {
-
-                // Create the initial client_log entry and set the request time
-                $log = new ClientLog();
-                $log->requested_at = now();
-
-                $user = $parameters[ClientLog::CLIENT_USER] ?? \Auth::user();
-
-                // Get the specified company (using ClientLog::CLIENT_COMPANY_ID request option),
-                // or the logged in company (or company provided by agent)
-                $log->user()->associate($user);
-//                $log->inputLog()->associate(InputLogger::getLog());
-
-                $log->fillFromRequestInterface($request, $options);
-
-                $options = array_merge([
-                    ClientLog::LOG_ENTRY       => $log,
-                    ClientLog::CLOCKWORK_ENTRY => $this->getClockworkEvent($log),
-                    RequestOptions::ON_STATS   => $this->onStatsHandler(
-                        $log, $options[RequestOptions::ON_STATS] ?? null
-                    ),
-                ]);
-            }, function (RequestInterface $request, array $options, PromiseInterface $promise) {
-
-                $promise->then(function (ResponseInterface $response) use ($options) {
-                    /** @var ClientLog $log */
-                    $log = $options[ClientLog::LOG_ENTRY];
-                    $log->fillFromResponseInterface($response);
-
-                    $options[ClientLog::CLOCKWORK_ENTRY]->end();
-                    $log->save();
-                });
-            }), 'client_logger');
+            $stack->push(static::getMiddleware($parameters), 'client_logger');
 
             return new Client($parameters);
         });
@@ -79,7 +47,7 @@ class GuzzleClientProvider extends ServiceProvider
         );
 
         $this->app->alias(Client::class, ClientInterface::class);
-
+        
         Guzzle::extend('default', static function (Container $app, ?array $parameters): Client {
             return app('LoggedClient', $parameters);
         });
@@ -116,5 +84,41 @@ class GuzzleClientProvider extends ServiceProvider
             $log->total_time = $timing['total_time'];
             $log->timing     = $timing->except('total_time');
         };
+    }
+
+    public static function getMiddleware($parameters = []) {
+        return Middleware::tap(function (RequestInterface $request, array &$options) use ($parameters) {
+
+            // Create the initial client_log entry and set the request time
+            $log = new ClientLog();
+            $log->requested_at = now();
+
+            $user = $parameters[ClientLog::CLIENT_USER] ?? \Auth::user();
+
+            // Get the specified company (using ClientLog::CLIENT_COMPANY_ID request option),
+            // or the logged in company (or company provided by agent)
+            $log->user()->associate($user);
+//                $log->inputLog()->associate(InputLogger::getLog());
+
+            $log->fillFromRequestInterface($request, $options);
+
+            $options = array_merge([
+                ClientLog::LOG_ENTRY       => $log,
+                ClientLog::CLOCKWORK_ENTRY => $this->getClockworkEvent($log),
+                RequestOptions::ON_STATS   => $this->onStatsHandler(
+                    $log, $options[RequestOptions::ON_STATS] ?? null
+                ),
+            ]);
+        }, function (RequestInterface $request, array $options, PromiseInterface $promise) {
+
+            $promise->then(function (ResponseInterface $response) use ($options) {
+                /** @var ClientLog $log */
+                $log = $options[ClientLog::LOG_ENTRY];
+                $log->fillFromResponseInterface($response);
+
+                $options[ClientLog::CLOCKWORK_ENTRY]->end();
+                $log->save();
+            });
+        });
     }
 }

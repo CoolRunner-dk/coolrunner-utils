@@ -8,7 +8,7 @@ return [
         ],
         'input_log' => [
             'table' => null,
-            'connection' => env('LOGGING_DATABASE', 'logging')
+            'connection' => env('LOGGING_CONNECTION', 'logging')
         ],
     ],
     "jobs" => [
