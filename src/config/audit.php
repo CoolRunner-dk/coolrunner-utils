@@ -120,7 +120,7 @@ return [
     'drivers' => [
         'database' => [
             'table'      => 'audits',
-            'connection' => 'logging',
+            'connection' => env('AUDIT_LOG_CONNECTION', 'logging'),
         ],
     ],
 

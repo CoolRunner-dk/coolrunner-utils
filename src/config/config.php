@@ -4,11 +4,11 @@ return [
     'drivers' => [
         'client_log' => [
             'table' => null,
-            'connection' => env('LOGGING_CONNECTION', 'logging')
+            'connection' => env('CLIENT_LOG_CONNECTION', 'logging')
         ],
         'input_log' => [
             'table' => null,
-            'connection' => env('LOGGING_CONNECTION', 'logging'),
+            'connection' => env('INPUT_LOG_CONNECTION', 'logging'),
             'blocked_prefixes' => [
                 '__clockwork',
             ]
