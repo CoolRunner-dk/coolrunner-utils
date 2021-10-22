@@ -17,7 +17,7 @@ class InputLogger
 
 
     public static function getSessionUuid() {
-        return static::getLog()->session_uuid;
+        return static::getLog()?->session_uuid;
     }
 
     public function handle(Request $request, $next)
