@@ -9,6 +9,7 @@ use CoolRunner\Utils\Support\Internal\SessionUuid;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
 
 class InputLogger
@@ -36,20 +37,14 @@ class InputLogger
 
     protected function start(Request $request) : Request
     {
-        $route = ltrim($request->getPathInfo(), '/');
+        if ($this->shouldLog($request)) {
+            static::$log = new InputLog();
 
-        foreach (static::getBlockedPrefixes() as $prefix) {
-            if (\Illuminate\Support\Str::startsWith($route, $prefix) || $route == $prefix) {
-                return $request;
-            }
+            $log               = static::getLog();
+            $log->requested_at = now();
+
+            $log->fillFromRequest($request);
         }
-
-        static::$log = new InputLog();
-
-        $log               = static::getLog();
-        $log->requested_at = now();
-
-        $log->fillFromRequest($request);
 
         return $request;
     }
@@ -70,7 +65,7 @@ class InputLogger
                 if ($controller instanceof Loggable) {
                     $controller->log($log);
                 }
-            }catch (\Throwable $e) {
+            } catch (\Throwable $e) {
                 report($e);
             }
         }
@@ -78,7 +73,25 @@ class InputLogger
         return $response;
     }
 
-    public static function getBlockedPrefixes() {
-        return Config::get('utils.drivers.input_log.blocked_prefixes',[]);
+    protected function shouldLog(Request $request)
+    {
+        $route = ltrim($request->getPathInfo(), '/');
+
+        foreach (static::getBlockedPrefixes() as $prefix) {
+            if (Str::startsWith($route, $prefix) || $route == $prefix) {
+                return false;
+            }
+        }
+
+        if (Str::contains($request->userAgent(), 'ELB-HealthChecker')) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public static function getBlockedPrefixes()
+    {
+        return Config::get('utils.drivers.input_log.blocked_prefixes', []);
     }
 }
