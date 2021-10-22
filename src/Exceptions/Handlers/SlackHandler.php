@@ -151,7 +151,7 @@ class SlackHandler extends \Monolog\Handler\SlackWebhookHandler
             })->all(),
         ];
 
-        $path = sprintf("route-runner/%s/%s.json", now()->format('Y-m-d'), md5(random_bytes(16)));
+        $path = sprintf("{$this->getStoragePrefix()}/%s/%s.json", now()->format('Y-m-d'), md5(random_bytes(16)));
 
         $this->getDisk()->put($path, json_encode($exception));
 
@@ -162,5 +162,16 @@ class SlackHandler extends \Monolog\Handler\SlackWebhookHandler
     public function getDisk() : FilesystemAdapter
     {
         return \Storage::disk('errors');
+    }
+
+    public function getStoragePrefix()
+    {
+        $name = \Str::kebab(env('APP_NAME'));
+
+        if (env('APP_DEBUG')) {
+            $name = 'local';
+        }
+
+        return $name;
     }
 }
