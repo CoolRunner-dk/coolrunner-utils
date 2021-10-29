@@ -7,8 +7,8 @@
 namespace CoolRunner\Utils\Models\Logging;
 
 use CoolRunner\Utils\Models\Audit\Audit;
+use CoolRunner\Utils\Support\Tools\Bytes;
 use CoolRunner\Utils\Traits\Logging\DeconstructsRequests;
-use CoolRunner\Support\Tools\Bytes;
 use CoolRunner\Utils\Traits\Models\BelongsToAuthModel;
 use CoolRunner\Utils\Traits\Models\HasSessionUuid;
 use CoolRunner\Utils\Traits\Models\SavesEnvironment;
@@ -130,10 +130,14 @@ class ClientLog extends Model
 
     public function fillFromResponseInterface(ResponseInterface $response, array $options = [])
     {
-        $this->response_headers = $response->getHeaders();
-        $this->response_body    = $this->mapBody($response);
-        $this->response_status  = $response->getStatusCode();
-        $this->response_phrase  = $response->getReasonPhrase();
+        try {
+            $this->response_headers = $response->getHeaders();
+            $this->response_body    = $this->mapBody($response);
+            $this->response_status  = $response->getStatusCode();
+            $this->response_phrase  = $response->getReasonPhrase();
+        } catch (\Exception $exception) {
+            report($exception);
+        }
 
         $response->getBody()->rewind();
     }
@@ -156,7 +160,7 @@ class ClientLog extends Model
             }
         }
 
-        return sprintf('Blocked Content-Type: %s | %s', $content_type, Bytes::reduce($message->getHeaderLine('Content-Length')));
+        return sprintf('Blocked Content-Type: %s | %s', $content_type, Bytes::reduce($message->getBody()->getSize()));
     }
 
     /**
