@@ -15,9 +15,10 @@ use Illuminate\Support\Facades\Auth;
 trait BelongsToAuthModel
 {
     public static function bootBelongsToAuthModel() {
-        static::creating(function (Model|BelongsToAuthModel $model) {
-            if(!$model->user)
+        static::saving(function (Model|BelongsToAuthModel $model) {
+            if (!$model->user) {
                 $model->user()->associate(Auth::getUser());
+            }
         });
     }
 
