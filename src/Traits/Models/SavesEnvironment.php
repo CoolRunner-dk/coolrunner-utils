@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 trait SavesEnvironment
 {
     public static function bootSavesEnvironment() {
-        static::creating(function (Model $model) {
+        static::saving(function (Model $model) {
             $model->environment = env('APP_NAME');
         });
     }
