@@ -10,7 +10,9 @@ trait SavesEnvironment
 {
     public static function bootSavesEnvironment() {
         static::saving(function (Model $model) {
-            $model->environment = env('APP_NAME');
+            if (!$model->enviroment) {
+                $model->environment = env('APP_NAME');
+            }
         });
     }
 }
