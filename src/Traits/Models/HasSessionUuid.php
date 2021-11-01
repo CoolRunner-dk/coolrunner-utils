@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\Model;
 trait HasSessionUuid
 {
     public static function bootHasSessionUuid() {
-        static::saving(function (Model $model) {
+        static::creating(function (Model $model) {
             $model->setAttribute('session_uuid', $model->session_uuid);
         });
     }
