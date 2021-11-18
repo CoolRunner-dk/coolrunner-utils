@@ -37,13 +37,17 @@ class InputLogger
 
     protected function start(Request $request) : Request
     {
-        if ($this->shouldLog($request)) {
-            static::$log = new InputLog();
+        try {
+            if ($this->shouldLog($request)) {
+                static::$log = new InputLog();
 
-            $log               = static::getLog();
-            $log->requested_at = now();
+                $log               = static::getLog();
+                $log->requested_at = now();
 
-            $log->fillFromRequest($request);
+                $log->fillFromRequest($request);
+            }
+        } catch (\Throwable $e) {
+            report($e);
         }
 
         return $request;
