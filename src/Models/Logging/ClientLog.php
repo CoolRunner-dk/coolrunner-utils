@@ -91,6 +91,7 @@ class ClientLog extends Model
 
     protected array $allowed_content_types = [
         'application/json',
+        'application/x-www-form-urlencoded',
         'text/xml',
         'text/html',
     ];
@@ -160,7 +161,13 @@ class ClientLog extends Model
             }
         }
 
-        return sprintf('Blocked Content-Type: %s | %s', $content_type, Bytes::reduce($message->getBody()->getSize()));
+        $length = $message->getBody()->getSize();
+
+        if ($length == 0) {
+            return '';
+        }
+
+        return sprintf('Blocked Content-Type: %s | %s', $content_type, Bytes::reduce($length));
     }
 
     /**

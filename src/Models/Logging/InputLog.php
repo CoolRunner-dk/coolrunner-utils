@@ -78,8 +78,6 @@ class InputLog extends Model
 
     const CONTENT_MAX = 100000;
 
-    protected $start_time;
-
     protected $casts = [
         'query'            => 'json',
         'timing'           => 'json',
@@ -89,8 +87,9 @@ class InputLog extends Model
         'requested_at'     => 'datetime',
     ];
 
-    protected $allowed_content_types = [
+    protected array $allowed_content_types = [
         'application/json',
+        'application/x-www-form-urlencoded',
         'text/xml',
     ];
 
@@ -153,6 +152,10 @@ class InputLog extends Model
         }
 
         $length = $headers->get('Content-Length') ?: mb_strlen($body);
+
+        if ($length == 0) {
+            return '';
+        }
 
         return sprintf('Blocked Content-Type: %s | %s', $content_type, Bytes::reduce($length));
     }
