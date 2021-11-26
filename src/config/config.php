@@ -78,5 +78,6 @@ return [
     'middleware' => [
         'audit'     => CoolRunner\Utils\Http\Middleware\AuditModelsChanges::class,
         'input_log' => CoolRunner\Utils\Http\Middleware\InputLogger::class,
+        'locale'    => \CoolRunner\Utils\Http\Middleware\SetLocale::class
     ],
 ];

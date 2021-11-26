@@ -16,7 +16,7 @@ trait BelongsToAuthModel
 {
     public static function bootBelongsToAuthModel() {
         static::saving(function (Model|BelongsToAuthModel $model) {
-            if (!$model->user && ($user =  Auth::user()) instanceof Model) {
+            if (!$model->user && ($user = Auth::user())) {
                 $model->user()->associate($user);
             }
         });
