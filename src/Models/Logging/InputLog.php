@@ -95,6 +95,7 @@ class InputLog extends Model
 
     public function fillFromRequest(Request $request) : static
     {
+        $this->environment     = env('APP_NAME');
         $this->uri             = $request->getUri();
         $this->method          = $request->method();
         $this->query           = $request->query->all();
