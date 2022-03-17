@@ -119,7 +119,7 @@ class ClientLog extends Model
         $options = optional($options);
 
         parse_str($request->getUri()->getQuery(), $query);
-
+        $this->environment     = env('APP_NAME');
         $this->uri             = (string)$request->getUri();
         $this->type            = $options[ClientLog::CLIENT_TYPE] ?: $request->getUri()->getHost();
         $this->service         = $options[ClientLog::CLIENT_SERVICE] ?: ltrim($request->getUri()->getPath(), '/');
