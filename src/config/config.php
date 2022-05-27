@@ -15,10 +15,10 @@ return [
         ],
     ],
     "jobs" => [
-      "save_model" => [
-          "queue" => env('UTILS_JOBS_QUEUE'),
-          "connection" => env('UTILS_JOBS_CONNECTION')
-      ]
+        "save_model" => [
+            "queue" => env('UTILS_JOBS_QUEUE'),
+            "connection" => env('UTILS_JOBS_CONNECTION')
+        ]
     ],
     'connections' => [
         'logging' => [
@@ -29,6 +29,15 @@ return [
             'database' => env('LOGGING_DB_DATABASE', 'logging'),
             'username' => env('LOGGING_DB_USERNAME', ''),
             'password' => env('LOGGING_DB_PASSWORD', ''),
+        ],
+        'advisering' => [
+            'driver' => 'mysql',
+            'url' => env('ADVISERING_DATABASE_URL'),
+            'host' => env('ADVISERING_DB_HOST'),
+            'port' => env('ADVISERING_DB_PORT', '3306'),
+            'database' => env('ADVISERING_DB_DATABASE', 'advisering'),
+            'username' => env('ADVISERING_DB_USERNAME', ''),
+            'password' => env('ADVISERING_DB_PASSWORD', ''),
         ]
     ],
     "guzzle" => [
@@ -74,6 +83,7 @@ return [
         "Bytes"     => \CoolRunner\Utils\Support\Tools\Bytes::class,
         "Converter" => \CoolRunner\Utils\Support\Tools\Converter::class,
         "Coords"    => \CoolRunner\Utils\Support\Tools\Coords::class,
+        "Advisering" => \CoolRunner\Utils\Support\Tools\Advisering::class,
     ],
     'middleware' => [
         'audit'     => CoolRunner\Utils\Http\Middleware\AuditModelsChanges::class,
