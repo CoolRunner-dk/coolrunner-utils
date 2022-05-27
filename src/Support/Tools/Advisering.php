@@ -47,7 +47,7 @@ class Advisering
                 "to" => $to_name,
                 "subject" => $subject,
                 "data" => json_encode($data),
-                "attachment" => $attachment,
+                "attachment" => json_encode($attachment),
                 "view" => $view_name,
                 "tracking_uuid" => Str::uuid(),
                 "locale" => $locale,
