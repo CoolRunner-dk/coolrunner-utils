@@ -2,6 +2,7 @@
 
 namespace CoolRunner\Utils\Support\Tools;
 
+use DateTime;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 
@@ -39,7 +40,7 @@ class Advisering
     ) {
 
         return DB::connection("advisering")
-            ->table('cr_mails')
+            ->table('mail')
             ->insert([
                 "from_email" => $from_email,
                 "from_name" => $from_name,
@@ -56,8 +57,6 @@ class Advisering
                 "created_at" => now(),
                 "updated_at" => now(),
             ]);
-
-        return $mail;
     }
 
     /**
@@ -76,11 +75,10 @@ class Advisering
         string $sender = "CoolRunner",
         string $locale = "da",
         array $data = [],
+        ?DateTime $send_at = null,
     ) {
-
-
         return DB::connection("advisering")
-            ->table('cr_sms')
+            ->table('sms')
             ->insert([
                 "recipients" => json_encode($recipients),
                 "message" => $message,
@@ -88,6 +86,7 @@ class Advisering
                 "tracking_uuid" => Str::uuid(),
                 "data" => json_encode($data),
                 "locale" => $locale,
+                "send_at" => $send_at ?? now(),
                 "created_at" => now(),
                 "updated_at" => now(),
             ]);
