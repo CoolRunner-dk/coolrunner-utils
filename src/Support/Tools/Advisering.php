@@ -40,7 +40,7 @@ class Advisering
     ) {
 
         return DB::connection("advisering")
-            ->table('mail')
+            ->table('mails')
             ->insert([
                 "from_email" => $from_email,
                 "from_name" => $from_name,
