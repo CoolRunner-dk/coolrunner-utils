@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\DB;
 class Advisering
 {
     /**
-     * Creates a mail entity, which will be sent by mailer service
+     * Creates a mail entity, which will be sent by mailer service. For multiple recipients, use AdviseringMail which utilises method chaining
      *
      * @param string $from_name name of the sender. Could be CoolRunner, HomeRunner, etc.
      * @param string $from_email email of the sender. Could be CoolRunner@no-reply.dk, HomeRunner@no-reply.dk, etc.
@@ -28,8 +28,7 @@ class Advisering
     public static function sendMail(
         string $from_name,
         string $from_email,
-        string $to_email,
-        string $to_name,
+        array $to_email,
         string $subject,
         array $data,
         array $attachment,
@@ -37,25 +36,27 @@ class Advisering
         ?string $customer,
         ?int $customer_id,
         string $locale = "da",
+        ?array $cc,
+        ?array $bcc,
     ) {
-
         return DB::connection("advisering")
             ->table('mails')
             ->insert([
                 "from_email" => $from_email,
                 "from_name" => $from_name,
-                "email" => $to_email,
-                "to" => $to_name,
+                "emails" => json_encode($to_email),
                 "subject" => $subject,
                 "data" => json_encode($data),
                 "attachment" => json_encode($attachment),
                 "view" => $view_name,
                 "tracking_uuid" => Str::uuid(),
                 "locale" => $locale,
-                "customer" => $customer,
-                "customer_id" => $customer_id,
+                "customer" => $customer ?? "",
+                "customer_id" => $customer_id ?? -1,
                 "created_at" => now(),
                 "updated_at" => now(),
+                "cc" => json_encode($cc ?? []),
+                "bcc" => json_encode($bcc ?? []),
             ]);
     }
 
