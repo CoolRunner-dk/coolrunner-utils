@@ -88,8 +88,8 @@ class AdviseringMail
             $this->customer ?? "",
             $this->customer_id ?? -1,
             $locale,
-            $this->bcc,
-            $this->cc,
+            $this->bcc ?? [],
+            $this->cc ?? [],
         );
     }
 }
