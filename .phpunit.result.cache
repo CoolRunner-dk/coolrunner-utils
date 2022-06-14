@@ -1,0 +1,1 @@
+{"version":1,"defects":[],"times":{"Tests\\Unit\\AdviseringTest::test_that_send_sms_works":0.055,"Tests\\Unit\\AdviseringTest::test_that_send_mail_works":0.005,"Tests\\Unit\\AdviseringTest::test_that_send_mail_chaining_works":0.004,"Tests\\Unit\\AdviseringTest::test_that_send_mail_chaining_works_with_multiple_receivers":0.004,"Tests\\Unit\\ExampleTest::test_that_true_is_true":0}}

@@ -1,34 +1,41 @@
 {
-  "name": "coolrunner/utils",
-  "description": "Coolrunner utils",
-  "type": "library",
-  "license": "MIT",
-  "authors": [
-    {
-      "name": "Coolrunner",
-      "email": "it@coolrunner.dk"
+    "name": "coolrunner/utils",
+    "description": "Coolrunner utils",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Coolrunner",
+            "email": "it@coolrunner.dk"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "CoolRunner\\Utils\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "CoolRunner\\Utils\\Tests\\": "tests"
+        }
+    },
+    "require": {
+        "php": "^8.0",
+        "owen-it/laravel-auditing": "^12.0",
+        "monolog/monolog": "^2.0"
+    },
+    "require-dev": {
+        "laravel/laravel": "^8.0",
+        "guzzlehttp/guzzle": "^7.3",
+        "phpunit/phpunit": "^9.5",
+        "orchestra/testbench": "6.21.1"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "CoolRunner\\Utils\\Providers\\UtilsServiceProvider",
+                "CoolRunner\\Utils\\Providers\\GuzzleClientProvider"
+            ]
+        }
     }
-  ],
-  "autoload": {
-    "psr-4": {
-      "CoolRunner\\Utils\\": "src/"
-    }
-  },
-  "require": {
-    "php": "^8.0",
-    "owen-it/laravel-auditing": "^12.0",
-    "monolog/monolog": "^2.0"
-  },
-  "require-dev": {
-    "laravel/laravel": "^8.0",
-    "guzzlehttp/guzzle": "^7.3"
-  },
-  "extra": {
-    "laravel": {
-      "providers": [
-        "CoolRunner\\Utils\\Providers\\UtilsServiceProvider",
-        "CoolRunner\\Utils\\Providers\\GuzzleClientProvider"
-      ]
-    }
-  }
 }

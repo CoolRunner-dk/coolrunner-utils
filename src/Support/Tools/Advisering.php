@@ -36,8 +36,8 @@ class Advisering
         ?string $customer,
         ?int $customer_id,
         string $locale = "da",
-        ?array $cc,
-        ?array $bcc,
+        ?array $cc = [],
+        ?array $bcc = [],
     ) {
         return DB::connection("advisering")
             ->table('mails')
