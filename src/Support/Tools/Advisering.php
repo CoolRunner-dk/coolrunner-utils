@@ -15,15 +15,15 @@ class Advisering
      * @param string $from_name name of the sender. Could be CoolRunner, HomeRunner, etc.
      * @param string $from_email email of the sender. Could be CoolRunner@no-reply.dk, HomeRunner@no-reply.dk, etc.
      * @param string $to_email - recipient email
-     * @param string $to_name -  recipient name
      * @param string $subject - subject of the mail
      * @param array $data key/value array
      * @param array $attachment 
-     * @param string $view_name - name of the blade view to send. Must be in the mailservice repository.
+     * @param string $view_name - name of the blade view to send. Must be in the advisering repository.
      * @param ?string $customer
      * @param ?int $customer_id 
      * @param string $locale - language code, "da" for danish, "no" for norwegian
-     *
+     * @param array $cc 
+     * @param array $bcc 
      */
     public static function sendMail(
         string $from_name,
@@ -64,10 +64,11 @@ class Advisering
      * Creates a sms entity, which will be sent by mailer service
      *
      * @param array $recipients array of numbers which should get the sms
-     * @param string $message message which should be sent. Must be in mailservice repository, sms localization file.
+     * @param string $message message which should be sent. Must be in advisering repository, sms localization file.
      * @param string $sender - Sender of the sms, most likely CoolRunner or HomeRunner
      * @param string $locale - locale of the sms
      * @param array $data -  key/value
+     * @param DateTime $send_at
      *
      */
     public static function sendSMS(
