@@ -13,7 +13,7 @@ class AdviseringMail
     private string $from_name, $from_email, $email_subject;
     private array $to, $cc, $bcc;
 
-    private array $data, $attachment;
+    private array $data, $attachment, $header;
 
     private ?string $customer, $customer_id;
 
@@ -65,6 +65,12 @@ class AdviseringMail
         return $this;
     }
 
+    public function withHeader(array $header)
+    {
+        $this->header = $header;
+        return $this;
+    }
+
     /** 
      * Use for tracking and analytics purposes.
      */
@@ -90,6 +96,7 @@ class AdviseringMail
             $locale,
             $this->bcc ?? [],
             $this->cc ?? [],
+            $this->header
         );
     }
 }
