@@ -38,6 +38,7 @@ class Advisering
         string $locale = "da",
         ?array $cc = [],
         ?array $bcc = [],
+        ?array $header = [],
     ) {
         return DB::connection("advisering")
             ->table('mails')
@@ -55,6 +56,7 @@ class Advisering
                 "customer_id" => $customer_id ?? -1,
                 "created_at" => now(),
                 "updated_at" => now(),
+                "header" => json_encode($header ?? []),
                 "cc" => json_encode($cc ?? []),
                 "bcc" => json_encode($bcc ?? []),
             ]);
