@@ -65,8 +65,8 @@ class Advisering
     /**
      * Creates a sms entity, which will be sent by mailer service
      *
-     * @param array $recipients array of numbers which should get the sms
-     * @param string $message message which should be sent. Must be in advisering repository, sms localization file.
+     * @param array|string $recipients array of numbers which should get the sms
+     * @param string $message message which should be sent. Must be in mailservice repository, sms localization file.
      * @param string $sender - Sender of the sms, most likely CoolRunner or HomeRunner
      * @param string $locale - locale of the sms
      * @param array $data -  key/value
@@ -74,13 +74,14 @@ class Advisering
      *
      */
     public static function sendSMS(
-        array $recipients,
+        array|string $recipients,
         string $message,
         string $sender = "CoolRunner",
         string $locale = "da",
         array $data = [],
         ?DateTime $send_at = null,
     ) {
+        $recipients = is_array($recipients) ? $recipients : [$recipients];
         return DB::connection("advisering")
             ->table('sms')
             ->insert([
