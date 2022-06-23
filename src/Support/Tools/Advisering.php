@@ -71,7 +71,7 @@ class Advisering
      *
      */
     public static function sendSMS(
-        array $recipients,
+        array|string $recipients,
         string $message,
         string $sender = "CoolRunner",
         string $locale = "da",
