@@ -96,7 +96,7 @@ class AdviseringMail
             $locale,
             $this->bcc ?? [],
             $this->cc ?? [],
-            $this->header
+            $this->header ?? [],
         );
     }
 }
