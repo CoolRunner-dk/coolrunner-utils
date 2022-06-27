@@ -5,11 +5,16 @@ namespace Tests\Unit;
 use CoolRunner\Utils\Support\Tools\Advisering;
 use CoolRunner\Utils\Support\Tools\AdviseringMail;
 use CoolRunner\Utils\Tests\TestCase;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
+use Mockery\MockInterface;
 
 class AdviseringTest extends TestCase
 {
     public function test_that_send_sms_works()
     {
+        Advisering::fake();
+
         $now = now();
         $res = Advisering::sendSMS(
             ["53381465"],
@@ -18,17 +23,18 @@ class AdviseringTest extends TestCase
             "da",
         );
 
-
-        $this->assertTrue($res);
-        $this->assertDatabaseHas("sms", [
+        Advisering::assertHas("sms", [
             "sender" => "sender_coolrunner_$now"
-        ], "advisering");
+        ]);
     }
 
     public function test_that_send_mail_works()
     {
+        Advisering::fake();
+
+
         $now = now();
-        $res = Advisering::sendMail(
+        Advisering::sendMail(
             "from_name_$now",
             "from@email.com",
             ["to@email.com",],
@@ -41,14 +47,16 @@ class AdviseringTest extends TestCase
         );
 
 
-        $this->assertTrue($res);
-        $this->assertDatabaseHas("mails", [
+        Advisering::assertHas("email", [
             "from_name" => "from_name_$now"
-        ], "advisering");
+        ]);
     }
 
     public function test_that_send_mail_chaining_works()
     {
+        Advisering::fake();
+
+
         $now = now();
         $mailer = new AdviseringMail();
         $mailer->to("jb@coolrunner.dk")
@@ -60,14 +68,16 @@ class AdviseringTest extends TestCase
             ->cc(["jb@coolrunner.dk"])
             ->send("emails.trustpilot");
 
-        $this->assertDatabaseHas("mails", [
+        Advisering::assertHas("email", [
             "subject" => "chaining_mail_test",
             "customer" => "testrunner_$now",
-        ], "advisering");
+        ]);
     }
 
     public function test_that_send_mail_chaining_works_with_multiple_receivers()
     {
+        Advisering::fake();
+
         $now = now();
         $mailer = new AdviseringMail();
         $mailer->to(["jb@coolrunner.dk", "test@example.com"])
@@ -79,10 +89,11 @@ class AdviseringTest extends TestCase
             ->cc(["jb@coolrunner.dk"])
             ->send("emails.trustpilot");
 
-        $this->assertDatabaseHas("mails", [
+
+        Advisering::assertHas("email", [
             "subject" => "chaining_mail_test",
             "customer" => "testrunner_$now",
             "from_name" => $now,
-        ], "advisering");
+        ]);
     }
 }
