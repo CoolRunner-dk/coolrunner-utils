@@ -14,11 +14,7 @@ class TestCase extends \Orchestra\Testbench\TestCase
 
 
         config([
-            "database.connections.advisering" => array_merge(config('database.connections.advisering'), [
-                "host" => "mariadb",
-                "username" => "root",
-                "password" => "root",
-            ])
+            "database.connections.advisering" => config('database.connections.testing')
         ]);
     }
 

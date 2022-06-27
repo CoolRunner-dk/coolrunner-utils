@@ -5,10 +5,14 @@ namespace CoolRunner\Utils\Support\Tools;
 use DateTime;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
-
+use PHPUnit\Framework\Assert as PHPUnit;
 
 class Advisering
 {
+
+    private static $test_stack = [];
+    private static $testing = false;
+
     /**
      * Creates a mail entity, which will be sent by mailer service. For multiple recipients, use AdviseringMail which utilises method chaining
      *
@@ -43,26 +47,30 @@ class Advisering
 
         $mails = is_array($to_email) ? $to_email : [$to_email];
 
-        return DB::connection("advisering")
+        $data = [
+            "from_email" => $from_email,
+            "from_name" => $from_name,
+            "emails" => json_encode($mails),
+            "subject" => $subject,
+            "data" => json_encode($data),
+            "attachment" => json_encode($attachment),
+            "view" => $view_name,
+            "tracking_uuid" => Str::uuid(),
+            "locale" => $locale,
+            "customer" => $customer ?? "",
+            "customer_id" => $customer_id ?? -1,
+            "created_at" => now(),
+            "updated_at" => now(),
+            "header" => json_encode($header ?? []),
+            "cc" => json_encode($cc ?? []),
+            "bcc" => json_encode($bcc ?? []),
+        ];
+
+        return (static::$testing) ?
+            static::$test_stack["email"][] = $data :
+            DB::connection("advisering")
             ->table('mails')
-            ->insert([
-                "from_email" => $from_email,
-                "from_name" => $from_name,
-                "emails" => json_encode($mails),
-                "subject" => $subject,
-                "data" => json_encode($data),
-                "attachment" => json_encode($attachment),
-                "view" => $view_name,
-                "tracking_uuid" => Str::uuid(),
-                "locale" => $locale,
-                "customer" => $customer ?? "",
-                "customer_id" => $customer_id ?? -1,
-                "created_at" => now(),
-                "updated_at" => now(),
-                "header" => json_encode($header ?? []),
-                "cc" => json_encode($cc ?? []),
-                "bcc" => json_encode($bcc ?? []),
-            ]);
+            ->insert($data);
     }
 
     /**
@@ -85,18 +93,46 @@ class Advisering
         ?DateTime $send_at = null,
     ) {
         $recipients = is_array($recipients) ? $recipients : [$recipients];
-        return DB::connection("advisering")
+        $data = [
+            "recipients" => json_encode($recipients),
+            "message" => $message,
+            "sender" => $sender,
+            "tracking_uuid" => Str::uuid(),
+            "data" => json_encode($data),
+            "locale" => $locale,
+            "send_at" => $send_at ?? now(),
+            "created_at" => now(),
+            "updated_at" => now(),
+        ];
+
+        return (static::$testing) ?
+            static::$test_stack["sms"][] = $data :
+            DB::connection("advisering")
             ->table('sms')
-            ->insert([
-                "recipients" => json_encode($recipients),
-                "message" => $message,
-                "sender" => $sender,
-                "tracking_uuid" => Str::uuid(),
-                "data" => json_encode($data),
-                "locale" => $locale,
-                "send_at" => $send_at ?? now(),
-                "created_at" => now(),
-                "updated_at" => now(),
-            ]);
+            ->insert($data);
+    }
+
+
+    public static function fake(): void
+    {
+
+        static::$testing = true;
+    }
+
+    public static function assertHas(string $type, array $data, ?string $message = null)
+    {
+
+        $test_data = collect(static::$test_stack[$type]);
+
+        if (!$test_data)
+            return false;
+
+        foreach ($data as $key => $value) {
+            $test_data = $test_data->where($key, $value);
+        }
+
+
+        $message = $message != null ? $message : "Invalid parameters for $type";
+        PHPUnit::assertTrue($test_data->count() > 0, $message);
     }
 }
