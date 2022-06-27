@@ -71,7 +71,7 @@ class AdviseringTest extends TestCase
         $now = now();
         $mailer = new AdviseringMail();
         $mailer->to(["jb@coolrunner.dk", "test@example.com"])
-            ->from("jb@coolrunner.dk",)
+            ->from("jb@coolrunner.dk", $now)
             ->subject("chaining_mail_test")
             ->withData(["test" => true, "123" => "string"])
             ->withCustomer("testrunner_$now", 1)
@@ -82,7 +82,7 @@ class AdviseringTest extends TestCase
         $this->assertDatabaseHas("mails", [
             "subject" => "chaining_mail_test",
             "customer" => "testrunner_$now",
-            "from" => "",
+            "from_name" => $now,
         ], "advisering");
     }
 }
