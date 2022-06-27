@@ -28,7 +28,7 @@ class Advisering
     public static function sendMail(
         string $from_name,
         string $from_email,
-        array $to_email,
+        array|string $to_email,
         string $subject,
         array $data,
         array $attachment,
@@ -40,12 +40,15 @@ class Advisering
         ?array $bcc = [],
         ?array $header = [],
     ) {
+
+        $mails = is_array($to_email) ? $to_email : [$to_email];
+
         return DB::connection("advisering")
             ->table('mails')
             ->insert([
                 "from_email" => $from_email,
                 "from_name" => $from_name,
-                "emails" => json_encode($to_email),
+                "emails" => json_encode($mails),
                 "subject" => $subject,
                 "data" => json_encode($data),
                 "attachment" => json_encode($attachment),
@@ -66,7 +69,7 @@ class Advisering
      * Creates a sms entity, which will be sent by mailer service
      *
      * @param array|string $recipients array of numbers which should get the sms
-     * @param string $message message which should be sent. Must be in mailservice repository, sms localization file.
+     * @param string $message message which should be sent. Must be in advisering-repository, sms localization file.
      * @param string $sender - Sender of the sms, most likely CoolRunner or HomeRunner
      * @param string $locale - locale of the sms
      * @param array $data -  key/value
