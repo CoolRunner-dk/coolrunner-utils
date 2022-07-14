@@ -27,7 +27,8 @@ class Advisering
      * @param ?int $customer_id 
      * @param string $locale - language code, "da" for danish, "no" for norwegian
      * @param array $cc 
-     * @param array $bcc 
+     * @param array $bcc
+     * @deprecated 
      */
     public static function sendMail(
         string $from_name,

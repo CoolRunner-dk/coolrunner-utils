@@ -3,20 +3,27 @@
 namespace CoolRunner\Utils\Support\Tools;
 
 use DateTime;
+use Exception;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
-
+use Illuminate\Support\Facades\Storage;
 
 class AdviseringMail
 {
+    const TEMPORARY_BUCKET = "cr-temporary";
 
     private string $from_name, $from_email, $email_subject;
     private array $to, $cc, $bcc;
 
-    private array $data, $attachment, $header;
+    private array $data, $attachment, $header, $local_attachments;
 
     private ?string $customer, $customer_id;
 
+
+    public static function create()
+    {
+        return new AdviseringMail();
+    }
 
     public function from($from_email, $from_name = "")
     {
@@ -59,6 +66,18 @@ class AdviseringMail
         return $this;
     }
 
+    public function withLocalAttachment(array $local_attachments)
+    {
+        if (!array_key_exists("s3", config(["filesystems.disks"]))) {
+            throw new Exception("Invalid s3 disk - can't find s3 disk in config files. please add filesystems.disks.s3");
+        }
+
+        $this->local_attachments = $local_attachments;
+        return $this;
+    }
+
+
+
     public function withData(array $data)
     {
         $this->data = $data;
@@ -83,6 +102,21 @@ class AdviseringMail
 
     public function send($view, $locale = "da")
     {
+
+        if ($this->local_attachments && !empty($this->local_attachments)) {
+            foreach ($this->local_attachments as $attachment) {
+                $uuid = str_replace("-", "", Str::uuid());
+                $path = "{$this->view}/$uuid/{$attachment['filename']}";
+                Storage::disk(self::TEMPORARY_BUCKET)->put($path, $attachment["content"]);
+
+                $this->attachment[] = [
+                    "name" => $path,
+                    "bucket" => isset($attachment["bucket"]) ? $attachment["bucket"] : self::TEMPORARY_BUCKET,
+                    "filename" => $attachment["filename"]
+                ];
+            }
+        }
+
         Advisering::sendMail(
             $this->from_name ?? "",
             $this->from_email ?? "",
@@ -98,5 +132,15 @@ class AdviseringMail
             $this->cc ?? [],
             $this->header ?? [],
         );
+    }
+
+    private function addS3BucketConfig()
+    {
+        // Add temporary bucket, if it doesnt already exists
+        if (config(["filesystems.disks." . self::TEMPORARY_BUCKET])) {
+            return config([
+                ("filesystems.disks." . self::TEMPORARY_BUCKET) => array_merge(config('filesystems.disks.s3'), ['bucket' => self::TEMPORARY_BUCKET]),
+            ]);
+        }
     }
 }
