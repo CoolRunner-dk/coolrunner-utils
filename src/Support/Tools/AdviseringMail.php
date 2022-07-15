@@ -2,10 +2,8 @@
 
 namespace CoolRunner\Utils\Support\Tools;
 
-use DateTime;
 use Exception;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class AdviseringMail
@@ -15,7 +13,7 @@ class AdviseringMail
     private string $from_name, $from_email, $email_subject;
     private array $to, $cc, $bcc;
 
-    private array $data, $attachment, $header, $local_attachments = [];
+    private array $data, $attachment, $header, $local_attachments;
 
     private ?string $customer, $customer_id;
 
@@ -23,6 +21,13 @@ class AdviseringMail
     public static function create()
     {
         return new AdviseringMail();
+    }
+
+    public function __construct()
+    {
+        $this->from_email = "noreply@coolrunner.dk";
+        $this->from_name = $this->email_subject = "Coolrunner";
+        $this->attachment = $this->header = $this->local_attachments = $this->data = $this->cc = $this->bcc = [];
     }
 
     public function from($from_email, $from_name = "")
@@ -68,9 +73,10 @@ class AdviseringMail
 
     public function withLocalAttachment(array $local_attachments)
     {
-        if (!array_key_exists("s3", config(["filesystems.disks"]))) {
+        if (!array_key_exists("s3", config("filesystems.disks"))) {
             throw new Exception("Invalid s3 disk - can't find s3 disk in config files. please add filesystems.disks.s3");
         }
+
 
         $this->local_attachments = $local_attachments;
         return $this;
@@ -103,15 +109,23 @@ class AdviseringMail
     public function send($view, $locale = "da")
     {
 
+        if ($this->to == null || empty($this->to)) {
+            throw new Exception("To parameter cant be empty, please call the ->to() function before calling ->send()!");
+        }
+
         if ($this->local_attachments != null && !empty($this->local_attachments)) {
+
             foreach ($this->local_attachments as $attachment) {
+                $bucket = isset($attachment["bucket"]) ? $attachment["bucket"] : self::TEMPORARY_BUCKET;
+                $this->addS3BucketConfig($bucket);
+
                 $uuid = str_replace("-", "", Str::uuid());
-                $path = "{$this->view}/$uuid/{$attachment['filename']}";
-                Storage::disk(self::TEMPORARY_BUCKET)->put($path, $attachment["content"]);
+                $path = "$view/$uuid/{$attachment['filename']}";
+                Storage::disk($bucket)->put($path, $attachment["content"]);
 
                 $this->attachment[] = [
                     "name" => $path,
-                    "bucket" => isset($attachment["bucket"]) ? $attachment["bucket"] : self::TEMPORARY_BUCKET,
+                    "bucket" => $bucket,
                     "filename" => $attachment["filename"]
                 ];
             }
@@ -134,12 +148,13 @@ class AdviseringMail
         );
     }
 
-    private function addS3BucketConfig()
+    private function addS3BucketConfig($bucket)
     {
         // Add temporary bucket, if it doesnt already exists
-        if (config(["filesystems.disks." . self::TEMPORARY_BUCKET])) {
+        if (config("filesystems.disks." . $bucket) == null) {
+
             return config([
-                ("filesystems.disks." . self::TEMPORARY_BUCKET) => array_merge(config('filesystems.disks.s3'), ['bucket' => self::TEMPORARY_BUCKET]),
+                ("filesystems.disks." . $bucket) => array_merge(config('filesystems.disks.s3'), ['bucket' => self::TEMPORARY_BUCKET]),
             ]);
         }
     }
