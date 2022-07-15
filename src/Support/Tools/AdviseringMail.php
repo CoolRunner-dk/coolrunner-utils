@@ -15,7 +15,7 @@ class AdviseringMail
     private string $from_name, $from_email, $email_subject;
     private array $to, $cc, $bcc;
 
-    private array $data, $attachment, $header, $local_attachments;
+    private array $data, $attachment, $header, $local_attachments = [];
 
     private ?string $customer, $customer_id;
 
@@ -103,7 +103,7 @@ class AdviseringMail
     public function send($view, $locale = "da")
     {
 
-        if ($this->local_attachments && !empty($this->local_attachments)) {
+        if ($this->local_attachments != null && !empty($this->local_attachments)) {
             foreach ($this->local_attachments as $attachment) {
                 $uuid = str_replace("-", "", Str::uuid());
                 $path = "{$this->view}/$uuid/{$attachment['filename']}";
