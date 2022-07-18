@@ -65,6 +65,7 @@ class Advisering
             "header" => json_encode($header ?? []),
             "cc" => json_encode($cc ?? []),
             "bcc" => json_encode($bcc ?? []),
+            "service_app_name" => config('app.name'),
         ];
 
         return (static::$testing) ?
@@ -104,6 +105,7 @@ class Advisering
             "send_at" => $send_at ?? now(),
             "created_at" => now(),
             "updated_at" => now(),
+            "service_app_name" => config('app.name'),
         ];
 
         return (static::$testing) ?
