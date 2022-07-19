@@ -10,6 +10,8 @@ class AdviseringMail
 {
     const TEMPORARY_BUCKET = "cr-temporary";
 
+    const EMAIL_DELIMITERS = '/(;|,)/';
+
     private string $from_name, $from_email, $email_subject;
     private array $to, $cc, $bcc;
 
@@ -43,19 +45,19 @@ class AdviseringMail
      */
     public function to(array|string $to)
     {
-        $this->to = is_array($to) ? $to : [$to];
+        $this->to = $this->formatEmails($to);
         return $this;
     }
 
     public function bcc(array $bcc)
     {
-        $this->bcc = $bcc;
+        $this->bcc = $this->formatEmails($bcc);
         return $this;
     }
 
     public function cc(array $cc)
     {
-        $this->cc = $cc;
+        $this->cc = $this->formatEmails($cc);
         return $this;
     }
 
@@ -132,19 +134,19 @@ class AdviseringMail
         }
 
         Advisering::sendMail(
-            $this->from_name ?? "",
-            $this->from_email ?? "",
-            $this->to,
-            $this->email_subject ?? "",
-            $this->data ?? [],
-            $this->attachment ?? [],
-            $view,
-            $this->customer ?? "",
-            $this->customer_id ?? -1,
-            $locale,
-            $this->bcc ?? [],
-            $this->cc ?? [],
-            $this->header ?? [],
+            from_name: $this->from_name ?? "",
+            from_email: $this->from_email ?? "",
+            to_email: $this->to,
+            subject: $this->email_subject ?? "",
+            data: $this->data ?? [],
+            attachment: $this->attachment ?? [],
+            view_name: $view,
+            customer: $this->customer ?? "",
+            customer_id: $this->customer_id ?? -1,
+            locale: $locale,
+            cc: $this->cc ?? [],
+            bcc: $this->bcc ?? [],
+            header: $this->header ?? [],
         );
     }
 
@@ -154,8 +156,43 @@ class AdviseringMail
         if (config("filesystems.disks." . $bucket) == null) {
 
             return config([
-                ("filesystems.disks." . $bucket) => array_merge(config('filesystems.disks.s3'), ['bucket' => self::TEMPORARY_BUCKET]),
+                ("filesystems.disks." . $bucket) => array_merge(config('filesystems.disks.s3'), ['bucket' => $bucket]),
             ]);
         }
+    }
+
+    private function formatEmails(array|string $subjects): array
+    {
+        $emails = is_array($subjects) ? $subjects : [$subjects];
+        $formatted = [];
+
+        foreach ($emails as $email) {
+
+            if (is_string($email)) {
+
+                foreach ($this->formatEmail($email) as $formatted_email) {
+                    $formatted[] = $formatted_email;
+                }
+            }
+
+
+            if (is_array($email)) {
+
+                foreach ($this->formatEmail($email["email"]) as $formatted_email) {
+                    $formatted[] = [
+                        "name" => $email["name"],
+                        "email" => $formatted_email
+                    ];
+                }
+            }
+        }
+
+        return $formatted;
+    }
+
+    private function formatEmail(string $subject): array
+    {
+        $cleaned = str_replace(" ", "", $subject);
+        return preg_split(self::EMAIL_DELIMITERS, $cleaned);
     }
 }
