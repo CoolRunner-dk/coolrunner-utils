@@ -2,6 +2,7 @@
 
 namespace CoolRunner\Utils\Support\Tools;
 
+
 use Exception;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
@@ -20,7 +21,7 @@ class AdviseringMail
     private ?string $customer, $customer_id;
 
 
-    public static function create()
+    public static function create(): AdviseringMail
     {
         return new AdviseringMail();
     }

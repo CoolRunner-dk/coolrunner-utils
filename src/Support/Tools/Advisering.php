@@ -115,7 +115,7 @@ class Advisering
             ->insert($data);
     }
 
-    public static function mail()
+    public static function mail(): AdviseringMail
     {
         return AdviseringMail::create();
     }

@@ -16,7 +16,6 @@ class AdviseringMailTest extends TestCase
     {
         Advisering::fake();
 
-
         $now = now();
         Advisering::sendMail(
             "from_name_$now",
