@@ -115,6 +115,11 @@ class Advisering
             ->insert($data);
     }
 
+    public static function mail(): AdviseringMail
+    {
+        return AdviseringMail::create();
+    }
+
 
     public static function fake(): void
     {
@@ -126,14 +131,12 @@ class Advisering
     {
 
         $test_data = collect(static::$test_stack[$type]);
-
         if (!$test_data)
             return false;
 
         foreach ($data as $key => $value) {
             $test_data = $test_data->where($key, $value);
         }
-
 
         $message = $message != null ? $message : "Invalid parameters for $type";
         PHPUnit::assertTrue($test_data->count() > 0, $message);

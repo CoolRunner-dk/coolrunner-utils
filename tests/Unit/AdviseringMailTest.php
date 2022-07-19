@@ -9,29 +9,12 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Mockery\MockInterface;
 
-class AdviseringTest extends TestCase
+class AdviseringMailTest extends TestCase
 {
-    public function test_that_send_sms_works()
-    {
-        Advisering::fake();
-
-        $now = now();
-        $res = Advisering::sendSMS(
-            ["53381465"],
-            "message_coolrunner_$now",
-            "sender_coolrunner_$now",
-            "da",
-        );
-
-        Advisering::assertHas("sms", [
-            "sender" => "sender_coolrunner_$now"
-        ]);
-    }
 
     public function test_that_send_mail_works()
     {
         Advisering::fake();
-
 
         $now = now();
         Advisering::sendMail(
@@ -49,6 +32,36 @@ class AdviseringTest extends TestCase
 
         Advisering::assertHas("email", [
             "from_name" => "from_name_$now"
+        ]);
+    }
+
+    public function test_that_emails_are_properly_formatted()
+    {
+        Advisering::fake();
+
+
+        $to = "jb@coolrunner.dk";
+        $bcc = [["name" => "bcc", "email" => "bcc@example.com"]];
+        $cc = ["email1@example.dk; email2@example.io", "email3@example.dk"];
+
+        $expected_to = ["jb@coolrunner.dk"];
+        $expected_bcc = [["name" => "bcc", "email" => "bcc@example.com"]];
+        $expected_cc = ["email1@example.dk", "email2@example.io", "email3@example.dk"];
+
+
+
+        AdviseringMail::create()
+            ->cc($cc)
+            ->bcc($bcc)
+            ->to($to)
+            ->send("test");
+
+
+        Advisering::assertHas("email", [
+            "emails" => json_encode($expected_to),
+            "cc" => json_encode($expected_cc),
+            "bcc" => json_encode($expected_bcc)
+
         ]);
     }
 
