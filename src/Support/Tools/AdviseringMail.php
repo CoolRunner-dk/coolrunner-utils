@@ -117,13 +117,12 @@ class AdviseringMail
         }
 
         if ($this->local_attachments != null && !empty($this->local_attachments)) {
-
             foreach ($this->local_attachments as $attachment) {
                 $bucket = isset($attachment["bucket"]) ? $attachment["bucket"] : self::TEMPORARY_BUCKET;
                 $this->addS3BucketConfig($bucket);
 
-                $uuid = str_replace("-", "", Str::uuid());
-                $path = "$view/$uuid/{$attachment['filename']}";
+                $uuid = Str::uuid();
+                $path = str_replace(["-", "."], "_", "$view/$uuid/{$attachment['filename']}");
                 Storage::disk($bucket)->put($path, $attachment["content"]);
 
                 $this->attachment[] = [
