@@ -30,7 +30,7 @@ class AdviseringMail
     {
         $this->from_email = "noreply@coolrunner.dk";
         $this->from_name = $this->email_subject = "Coolrunner";
-        $this->attachment = $this->header = $this->local_attachments = $this->data = $this->cc = $this->bcc = [];
+        $this->attachment = $this->header = $this->local_attachments = $this->data = $this->to = $this->cc = $this->bcc = [];
     }
 
     public function from($from_email, $from_name = "")
@@ -112,8 +112,8 @@ class AdviseringMail
     public function send($view, $locale = "da")
     {
 
-        if ($this->to == null || empty($this->to)) {
-            throw new Exception("To parameter cant be empty, please call the ->to() function before calling ->send()!");
+        if (empty($this->to) && empty($this->bcc)) {
+            throw new Exception("'to' and 'bcc' parameters may not be empty, please call the ->to() or ->bcc() function before calling ->send()!");
         }
 
         if ($this->local_attachments != null && !empty($this->local_attachments)) {
